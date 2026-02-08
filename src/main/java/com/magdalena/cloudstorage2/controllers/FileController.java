@@ -12,6 +12,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -45,6 +46,11 @@ public class FileController {
     @DeleteMapping("/{fileId}")
     public void deleteFile(@PathVariable UUID fileId) {
         fileService.deleteFile(fileId);
+    }
+
+    @GetMapping("/folder/{folderId}")
+    public List<FileResponse> getFilesByFolder(@PathVariable UUID folderId) {
+        return fileService.getFilesByFolder(folderId);
     }
 
 }

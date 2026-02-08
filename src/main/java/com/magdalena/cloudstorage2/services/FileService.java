@@ -5,6 +5,8 @@ import com.magdalena.cloudstorage2.models.Folder;
 import com.magdalena.cloudstorage2.models.StoredFile;
 import com.magdalena.cloudstorage2.repositories.FolderRepository;
 import com.magdalena.cloudstorage2.repositories.StoredFileRepository;
+import java.util.List;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -39,11 +41,8 @@ public class FileService {
 
             StoredFile saved = storedFileRepository.save(storedFile);
 
-            FileResponse response = new FileResponse();
-            response.setId(saved.getId());
-            response.setFilename(saved.getFilename());
+            return new FileResponse(saved.getId(), saved.getFilename());
 
-            return response;
 
         } catch (IOException e) {
             throw new RuntimeException("Failed to store file", e);
@@ -72,6 +71,16 @@ public class FileService {
         }
 
         storedFileRepository.deleteById(fileId);
+    }
+    /**
+     * Returns all files that belong to a specific folder.
+     *
+     * @param folderId the ID of the folder
+     * @return list of files in the folder
+     */
+    public List<FileResponse> getFilesByFolder(UUID folderId) {
+
+        return storedFileRepository.findFileResponsesByFolderId(folderId);
     }
 
 

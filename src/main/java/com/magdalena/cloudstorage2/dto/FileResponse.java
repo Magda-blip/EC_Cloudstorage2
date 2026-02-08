@@ -11,4 +11,9 @@ public class FileResponse {
 
     private UUID id;
     private String filename;
+
+    public FileResponse(UUID id, String filename) {
+        this.id = id;
+        this.filename = filename;
+    }
 }
