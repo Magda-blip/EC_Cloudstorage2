@@ -23,8 +23,12 @@ public class FolderService {
     private final UserService userService;
 
 
+
     /**
-     * Creates a folder for the currently authenticated user.
+     * Creates a new folder owned by the currently authenticated user.
+     *
+     * @param name name of the folder
+     * @return created folder
      */
     public Folder createFolder(String name) {
         User user = userService.getCurrentUser();
@@ -36,8 +40,11 @@ public class FolderService {
         return folderRepository.save(folder);
     }
 
+
     /**
-     * Returns all folders owned by the current user.
+     * Retrieves all folders belonging to the currently authenticated user.
+     *
+     * @return list of folders owned by the user
      */
     public List<FolderResponse> getMyFolders() {
         User user = userService.getCurrentUser();

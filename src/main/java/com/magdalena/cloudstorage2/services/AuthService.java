@@ -15,7 +15,11 @@ public class AuthService {
     private final BCryptPasswordEncoder passwordEncoder;
 
     /**
-     * Verifies username and password.
+     * Authenticates a user by verifying username and password.
+     *
+     * @param request login request containing username and password
+     * @return authenticated user
+     * @throws RuntimeException if credentials are invalid
      */
     public User authenticate(LoginRequest request) {
         User user = userRepository.findByUsername(request.getUsername())

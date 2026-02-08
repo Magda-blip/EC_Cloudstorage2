@@ -24,11 +24,13 @@ public class FileService {
     private final UserService userService;
 
     /**
-     * Uploads a file and stores it in the database, linked to a folder.
+     * Uploads a file to a specific folder owned by the current user.
+     * The file content is stored directly in the database.
      *
-     * @param folderId the ID of the folder
-     * @param file     the uploaded file
-     * @return the stored file entity
+     * @param folderId ID of the target folder
+     * @param file multipart file uploaded by the client
+     * @return basic file information
+     * @throws RuntimeException if folder is not found or access is denied
      */
     public FileResponse uploadFile(UUID folderId, MultipartFile file) {
 
@@ -59,17 +61,19 @@ public class FileService {
     /**
      * Retrieves a stored file by its ID.
      *
-     * @param fileId the ID of the file
-     * @return the stored file
+     * @param fileId ID of the file
+     * @return stored file entity
+     * @throws RuntimeException if file is not found
      */
     public StoredFile getFile(UUID fileId) {
         return storedFileRepository.findById(fileId)
                 .orElseThrow(() -> new RuntimeException("File not found"));
     }
     /**
-     * Deletes a stored file by its ID.
+     * Deletes a file by its ID.
      *
-     * @param fileId the ID of the file to delete
+     * @param fileId ID of the file to delete
+     * @throws RuntimeException if the file does not exist
      */
     public void deleteFile(UUID fileId) {
 
@@ -80,10 +84,10 @@ public class FileService {
         storedFileRepository.deleteById(fileId);
     }
     /**
-     * Returns all files that belong to a specific folder.
+     * Retrieves all files within a specific folder.
      *
-     * @param folderId the ID of the folder
-     * @return list of files in the folder
+     * @param folderId ID of the folder
+     * @return list of files belonging to the folder
      */
     public List<FileResponse> getFilesByFolder(UUID folderId) {
 

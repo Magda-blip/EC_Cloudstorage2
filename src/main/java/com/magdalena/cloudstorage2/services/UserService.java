@@ -17,7 +17,11 @@ public class UserService {
     private final BCryptPasswordEncoder passwordEncoder;
 
     /**
-     * Creates a new user and hashes the password before saving.
+     * Creates a new user account.
+     * The password is hashed using BCrypt before persisting.
+     *
+     * @param user user entity containing username and raw password
+     * @return persisted user
      */
     public User createUser(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -25,7 +29,10 @@ public class UserService {
     }
 
     /**
-     * Returns the currently authenticated user.
+     * Retrieves the currently authenticated user based on the JWT token.
+     *
+     * @return authenticated user
+     * @throws RuntimeException if the user cannot be found
      */
     public User getCurrentUser() {
         String username = SecurityUtils.getCurrentUsername();
