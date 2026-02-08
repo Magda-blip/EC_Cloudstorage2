@@ -13,22 +13,17 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/folders")
 @RequiredArgsConstructor
-
 public class FolderController {
 
     private final FolderService folderService;
 
     @PostMapping
     public Folder createFolder(@RequestBody CreateFolderRequest request) {
-        return folderService.createFolder(
-                request.getName(),
-                request.getUserId()
-        );
+        return folderService.createFolder(request.getName());
     }
 
-
-    @GetMapping("/user/{userId}")
-    public List<FolderResponse> getFoldersByUser(@PathVariable UUID userId) {
-        return folderService.getFoldersByUser(userId);
+    @GetMapping
+    public List<FolderResponse> getMyFolders() {
+        return folderService.getMyFolders();
     }
 }

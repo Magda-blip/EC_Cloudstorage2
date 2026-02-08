@@ -3,6 +3,7 @@ package com.magdalena.cloudstorage2.services;
 
 import com.magdalena.cloudstorage2.models.User;
 import com.magdalena.cloudstorage2.repositories.UserRepository;
+import com.magdalena.cloudstorage2.security.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -22,4 +23,15 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
+
+    /**
+     * Returns the currently authenticated user.
+     */
+    public User getCurrentUser() {
+        String username = SecurityUtils.getCurrentUsername();
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
+
 }

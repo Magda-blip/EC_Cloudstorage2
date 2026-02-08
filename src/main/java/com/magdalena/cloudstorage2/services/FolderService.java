@@ -20,10 +20,14 @@ public class FolderService {
 
     private final FolderRepository folderRepository;
     private final UserRepository userRepository;
+    private final UserService userService;
 
-    public Folder createFolder(String name, UUID userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+
+    /**
+     * Creates a folder for the currently authenticated user.
+     */
+    public Folder createFolder(String name) {
+        User user = userService.getCurrentUser();
 
         Folder folder = new Folder();
         folder.setName(name);
@@ -32,14 +36,13 @@ public class FolderService {
         return folderRepository.save(folder);
     }
 
-     // Returns all folders that belong to a specific user.
+    /**
+     * Returns all folders owned by the current user.
+     */
+    public List<FolderResponse> getMyFolders() {
+        User user = userService.getCurrentUser();
 
-     //@param userId the ID of the user
-     //@return list of folders owned by the user
-
-    public List<FolderResponse> getFoldersByUser(UUID userId) {
-
-        return folderRepository.findByUserId(userId)
+        return folderRepository.findByUserId(user.getId())
                 .stream()
                 .map(folder -> {
                     FolderResponse response = new FolderResponse();
@@ -49,4 +52,5 @@ public class FolderService {
                 })
                 .toList();
     }
+
 }

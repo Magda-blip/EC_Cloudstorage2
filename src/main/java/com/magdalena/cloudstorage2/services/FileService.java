@@ -3,6 +3,7 @@ package com.magdalena.cloudstorage2.services;
 import com.magdalena.cloudstorage2.dto.FileResponse;
 import com.magdalena.cloudstorage2.models.Folder;
 import com.magdalena.cloudstorage2.models.StoredFile;
+import com.magdalena.cloudstorage2.models.User;
 import com.magdalena.cloudstorage2.repositories.FolderRepository;
 import com.magdalena.cloudstorage2.repositories.StoredFileRepository;
 import java.util.List;
@@ -20,6 +21,7 @@ public class FileService {
 
     private final StoredFileRepository storedFileRepository;
     private final FolderRepository folderRepository;
+    private final UserService userService;
 
     /**
      * Uploads a file and stores it in the database, linked to a folder.
@@ -30,8 +32,14 @@ public class FileService {
      */
     public FileResponse uploadFile(UUID folderId, MultipartFile file) {
 
+        User user = userService.getCurrentUser();
+
         Folder folder = folderRepository.findById(folderId)
                 .orElseThrow(() -> new RuntimeException("Folder not found"));
+
+        if (!folder.getUser().getId().equals(user.getId())) {
+            throw new RuntimeException("Access denied");
+        }
 
         try {
             StoredFile storedFile = new StoredFile();
@@ -42,7 +50,6 @@ public class FileService {
             StoredFile saved = storedFileRepository.save(storedFile);
 
             return new FileResponse(saved.getId(), saved.getFilename());
-
 
         } catch (IOException e) {
             throw new RuntimeException("Failed to store file", e);
