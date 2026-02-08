@@ -4,6 +4,7 @@ import com.magdalena.cloudstorage2.models.Folder;
 import com.magdalena.cloudstorage2.models.User;
 import com.magdalena.cloudstorage2.repositories.FolderRepository;
 import com.magdalena.cloudstorage2.repositories.UserRepository;
+import com.magdalena.cloudstorage2.dto.FolderResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -30,13 +31,22 @@ public class FolderService {
 
         return folderRepository.save(folder);
     }
-    /**
-     * Returns all folders that belong to a specific user.
-     *
-     * @param userId the ID of the user
-     * @return list of folders owned by the user
-     */
-    public List<Folder> getFoldersByUser(UUID userId) {
-        return folderRepository.findByUserId(userId);
+
+     // Returns all folders that belong to a specific user.
+
+     //@param userId the ID of the user
+     //@return list of folders owned by the user
+
+    public List<FolderResponse> getFoldersByUser(UUID userId) {
+
+        return folderRepository.findByUserId(userId)
+                .stream()
+                .map(folder -> {
+                    FolderResponse response = new FolderResponse();
+                    response.setId(folder.getId());
+                    response.setName(folder.getName());
+                    return response;
+                })
+                .toList();
     }
 }
