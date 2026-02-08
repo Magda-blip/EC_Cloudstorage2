@@ -8,6 +8,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+
 import java.util.UUID;
 
 @RestController
@@ -24,4 +28,19 @@ public class FileController {
     ) {
         return fileService.uploadFile(folderId, file);
     }
+
+    @GetMapping("/{fileId}")
+    public ResponseEntity<byte[]> downloadFile(@PathVariable UUID fileId) {
+
+        StoredFile file = fileService.getFile(fileId);
+
+        return ResponseEntity.ok()
+                .header(
+                        HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=\"" + file.getFilename() + "\""
+                )
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(file.getContent());
+    }
+
 }

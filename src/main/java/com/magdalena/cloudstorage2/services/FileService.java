@@ -49,4 +49,17 @@ public class FileService {
             throw new RuntimeException("Failed to store file", e);
         }
     }
+
+    /**
+     * Retrieves a stored file by its ID.
+     *
+     * @param fileId the ID of the file
+     * @return the stored file
+     */
+    public StoredFile getFile(UUID fileId) {
+        return storedFileRepository.findById(fileId)
+                .orElseThrow(() -> new RuntimeException("File not found"));
+    }
+
+
 }
