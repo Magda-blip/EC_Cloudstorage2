@@ -42,5 +42,9 @@ public class FileController {
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .body(file.getContent());
     }
+    @DeleteMapping("/{fileId}")
+    public void deleteFile(@PathVariable UUID fileId) {
+        fileService.deleteFile(fileId);
+    }
 
 }

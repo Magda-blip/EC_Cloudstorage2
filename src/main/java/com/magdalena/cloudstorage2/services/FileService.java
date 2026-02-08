@@ -60,6 +60,19 @@ public class FileService {
         return storedFileRepository.findById(fileId)
                 .orElseThrow(() -> new RuntimeException("File not found"));
     }
+    /**
+     * Deletes a stored file by its ID.
+     *
+     * @param fileId the ID of the file to delete
+     */
+    public void deleteFile(UUID fileId) {
+
+        if (!storedFileRepository.existsById(fileId)) {
+            throw new RuntimeException("File not found");
+        }
+
+        storedFileRepository.deleteById(fileId);
+    }
 
 
 }
