@@ -1,34 +1,42 @@
 package com.magdalena.cloudstorage2.services;
 
 import com.magdalena.cloudstorage2.models.Folder;
+import com.magdalena.cloudstorage2.models.User;
 import com.magdalena.cloudstorage2.repositories.FolderRepository;
+import com.magdalena.cloudstorage2.repositories.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
+
+
 public class FolderService {
 
+
     private final FolderRepository folderRepository;
+    private final UserRepository userRepository;
 
-    public FolderService(FolderRepository folderRepository) {
-        this.folderRepository = folderRepository;
-    }
+    public Folder createFolder(String name, UUID userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
-    //Creates and saves new folder
-    public Folder createFolder(Folder folder) {
+        Folder folder = new Folder();
+        folder.setName(name);
+        folder.setUser(user);
+
         return folderRepository.save(folder);
     }
-
-    //Gets all folders
-    public List<Folder> getAllFolders() {
-        return folderRepository.findAll();
-    }
-
-    //Find folder by id
-    public Folder getFolderById(UUID id) {
-        return folderRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Folder not found"));
+    /**
+     * Returns all folders that belong to a specific user.
+     *
+     * @param userId the ID of the user
+     * @return list of folders owned by the user
+     */
+    public List<Folder> getFoldersByUser(UUID userId) {
+        return folderRepository.findByUserId(userId);
     }
 }

@@ -1,47 +1,31 @@
 package com.magdalena.cloudstorage2.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+//Create table if not exist, create folder upon request
+import jakarta.persistence.*;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 import java.util.UUID;
 
+@Entity
+@Table(name = "folders")
+@Getter
+@Setter
+@NoArgsConstructor
+public class Folder {
 
-    @Entity
-    @Table(name = "folders")
+    @Id
+    @GeneratedValue
+    private UUID id;
 
-
-    public class Folder {
-
-        @Id
-        @GeneratedValue
-        private UUID id; // UUID
-        private String name;
-
-        // Empty Constructor for JPA
-        public Folder() {
-
-        }
-        // Egen konstruktor för att skapa folders i koden
-        public Folder(String name) {
-            this.name = name;
-        }
+    @Column(nullable = false)
+    private String name;
 
 
-        // JPA Getter&Setters
-        public UUID getId() {
-            return id;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-    }
-
-
-
+    //One user - many folders, folder must have user, create user_id
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "user_id")
+    private User user;
+}
