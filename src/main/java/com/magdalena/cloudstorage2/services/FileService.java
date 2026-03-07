@@ -60,39 +60,73 @@ public class FileService {
 
     /**
      * Retrieves a stored file by its ID.
+     * Ensures that the resource belongs to the authenticated user
      *
      * @param fileId ID of the file
      * @return stored file entity
-     * @throws RuntimeException if file is not found
+     * @throws RuntimeException if file is not found or access is denied
      */
     public StoredFile getFile(UUID fileId) {
-        return storedFileRepository.findById(fileId)
+
+        User user = userService.getCurrentUser();
+
+        StoredFile file = storedFileRepository.findById(fileId)
                 .orElseThrow(() -> new RuntimeException("File not found"));
+
+        checkFileOwnership(file, user);
+
+        return file;
     }
+
     /**
      * Deletes a file by its ID.
+     * Ensures that the resource belongs to the authenticated user
      *
      * @param fileId ID of the file to delete
-     * @throws RuntimeException if the file does not exist
+     * @throws RuntimeException if the file does not exist or access is denied
      */
     public void deleteFile(UUID fileId) {
 
-        if (!storedFileRepository.existsById(fileId)) {
-            throw new RuntimeException("File not found");
-        }
+        User user = userService.getCurrentUser();
 
-        storedFileRepository.deleteById(fileId);
+        StoredFile file = storedFileRepository.findById(fileId)
+                .orElseThrow(() -> new RuntimeException("File not found"));
+
+        checkFileOwnership(file, user);
+
+        storedFileRepository.delete(file);
     }
+
+    private void checkFolderOwnership(Folder folder, User user) {
+        if (!folder.getUser().getId().equals(user.getId())) {
+            throw new RuntimeException("Access denied");
+        }
+    }
+
     /**
      * Retrieves all files within a specific folder.
+     * Ensures that the resource belongs to the authenticated user
      *
      * @param folderId ID of the folder
      * @return list of files belonging to the folder
+     * @throws RuntimeException if folder is not found or access is denied
      */
+
     public List<FileResponse> getFilesByFolder(UUID folderId) {
+
+        User user = userService.getCurrentUser();
+
+        Folder folder = folderRepository.findById(folderId)
+                .orElseThrow(() -> new RuntimeException("Folder not found"));
+
+        checkFolderOwnership(folder, user);
 
         return storedFileRepository.findFileResponsesByFolderId(folderId);
     }
 
-
+    private void checkFileOwnership(StoredFile file, User user) {
+        if (!file.getFolder().getUser().getId().equals(user.getId())) {
+            throw new RuntimeException("Access denied");
+        }
+    }
 }
